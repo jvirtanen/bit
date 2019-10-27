@@ -1,0 +1,5 @@
+/.mypy_cache/
+/bit.egg-info/
+/build/
+/dist/
+__pycache__/
