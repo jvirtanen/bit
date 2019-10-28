@@ -24,6 +24,17 @@ def work_tree() -> str:
     return os.environ.get('GIT_WORK_TREE', os.getcwd())
 
 
+class GitError(Exception):
+    pass
+
+
+def clone(repository: str) -> None:
+    try:
+        subprocess.run(['git', 'clone', repository], check=True)
+    except subprocess.CalledProcessError as e:
+        raise GitError(e)
+
+
 class Remote(typing.NamedTuple):
     name: str
     url: str

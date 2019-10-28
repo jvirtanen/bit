@@ -49,6 +49,10 @@ class Client:
         return [_parse_pull_request(value) for value in data['values']]
 
 
+def git_url(repository: str) -> str:
+    return 'git@bitbucket.org:{}.git'.format(repository)
+
+
 def repository(path: str = None) -> typing.Optional[str]:
     for remote in git.remote(path):
         repository = _parse_repository(remote)

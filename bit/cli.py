@@ -23,6 +23,20 @@ from . import git
 from . import http
 
 
+CLONE_USAGE = '''\
+Usage: bit clone <repository>\
+'''
+
+
+def clone(args: typing.Sequence[str]) -> None:
+    if len(args) != 1:
+        _usage(CLONE_USAGE)
+    try:
+        git.clone(bitbucket.git_url(args[0]))
+    except git.GitError:
+        sys.exit(1)
+
+
 def pr_list(args: typing.Sequence[str]) -> None:
     try:
         _format_pull_requests(_client().get_pull_requests(_repository()))
@@ -49,12 +63,14 @@ Usage: bit <command> [<args>]
 
 Available commands:
 
-    pr  List pull requests
+    clone  Clone a repository
+    pr     List pull requests
 \
 '''
 
 
 MAIN_COMMANDS = {
+    'clone': clone,
     'pr': pr,
 }
 

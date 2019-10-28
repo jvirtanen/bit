@@ -22,6 +22,11 @@ The first time Bit requires access to Bitbucket, it will ask for your username
 and an app password. You can create an app password by navigating to _Bitbucket
 settings_, _App passwords_ on the website.
 
+Clone a repository:
+```
+bit clone jvirtanen/bit
+```
+
 List open pull requests:
 ```
 bit pr list
