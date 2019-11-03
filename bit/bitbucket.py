@@ -57,8 +57,16 @@ def repository(path: str = None) -> typing.Optional[str]:
     return None
 
 
+REMOTE_URL_PATTERNS = [
+    r'git@bitbucket.org:(?P<repository>[^\.]+).git',
+    r'https://bitbucket.org/(?P<repository>[^\.]+).git',
+    r'https://\w+@bitbucket.org/(?P<repository>[^\.]+).git',
+]
+
+
 def _parse_repository(remote_url: str) -> typing.Optional[str]:
-    match = re.match(r'git@bitbucket.org:(?P<repository>[^\.]+).git', remote_url)
-    if not match:
-        return None
-    return match['repository']
+    for pattern in REMOTE_URL_PATTERNS:
+        match = re.match(pattern, remote_url)
+        if match:
+            return match['repository']
+    return None
