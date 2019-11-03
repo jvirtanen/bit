@@ -51,14 +51,14 @@ class Client:
 
 def repository(path: str = None) -> typing.Optional[str]:
     for remote in git.remote(path):
-        repository = _parse_repository(remote)
+        repository = _parse_repository(remote.url)
         if repository:
             return repository
     return None
 
 
-def _parse_repository(remote: git.Remote) -> typing.Optional[str]:
-    match = re.match(r'git@bitbucket.org:(?P<repository>[^\.]+).git', remote.url)
+def _parse_repository(remote_url: str) -> typing.Optional[str]:
+    match = re.match(r'git@bitbucket.org:(?P<repository>[^\.]+).git', remote_url)
     if not match:
         return None
     return match['repository']
