@@ -50,7 +50,27 @@ class Client:
 
 
 def repository(path: str = None) -> typing.Optional[str]:
-    for remote in git.remote(path):
+    remotes = git.remote(path)
+    return _preferred_repository(remotes) or _any_repository(remotes)
+
+
+PREFERRED_REMOTE_NAMES = ['upstream', 'bitbucket', 'origin']
+
+
+def _preferred_repository(remotes: typing.Sequence[git.Remote]) -> typing.Optional[str]:
+    remote_urls = {remote.name: remote.url for remote in remotes}
+    for remote_name in PREFERRED_REMOTE_NAMES:
+        remote_url = remote_urls.get(remote_name)
+        if not remote_url:
+            continue
+        repository = _parse_repository(remote_url)
+        if repository:
+            return repository
+    return None
+
+
+def _any_repository(remotes: typing.Sequence[git.Remote]) -> typing.Optional[str]:
+    for remote in remotes:
         repository = _parse_repository(remote.url)
         if repository:
             return repository

@@ -22,6 +22,9 @@ The first time Bit requires access to Bitbucket, it will ask for your username
 and an app password. You can create an app password by navigating to _Bitbucket
 settings_, _App passwords_ on the website.
 
+If your repository has multiple remotes pointing to Bitbucket, Bit assumes that
+the primary remote is called either `upstream`, `bitbucket`, or `origin`.
+
 List open pull requests:
 ```
 bit pr list
