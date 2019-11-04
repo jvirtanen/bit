@@ -8,3 +8,5 @@ install:
 script:
   - mypy bit
   - pylint bit
+notifications:
+  email: false
