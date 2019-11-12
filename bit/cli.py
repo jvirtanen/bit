@@ -23,6 +23,26 @@ from . import git
 from . import http
 
 
+def pr_list(args: typing.Sequence[str]) -> None:
+    try:
+        _format_pull_requests(_client().get_pull_requests(_repository()))
+    except http.HTTPError as e:
+        _error(e)
+
+
+PR_USAGE = '''\
+Usage: bit pr list\
+'''
+
+PR_COMMANDS = {
+    'list': pr_list,
+}
+
+
+def pr(args: typing.Sequence[str]) -> None:
+    _run_command(args, PR_COMMANDS, PR_USAGE)
+
+
 MAIN_USAGE = '''\
 Usage: bit <command> [<args>]
 
@@ -32,31 +52,26 @@ Available commands:
 \
 '''
 
+MAIN_COMMANDS = {
+    'pr': pr,
+}
+
 
 def main(args: typing.Sequence[str]) -> None:
-    if args[:1] == ['pr']:
-        pr(args[1:])
-    else:
-        _usage(MAIN_USAGE)
+    _run_command(args, MAIN_COMMANDS, MAIN_USAGE)
 
 
-PR_USAGE = '''\
-Usage: bit pr list\
-'''
+Command = typing.Callable[[typing.Sequence[str]], None]
 
 
-def pr(args: typing.Sequence[str]) -> None:
-    if args[:1] == ['list']:
-        pr_list()
-    else:
-        _usage(PR_USAGE)
-
-
-def pr_list() -> None:
-    try:
-        _format_pull_requests(_client().get_pull_requests(_repository()))
-    except http.HTTPError as e:
-        _error(e)
+def _run_command(args: typing.Sequence[str],
+                 commands: typing.Mapping[str, Command], usage_message: str) -> None:
+    if len(args) < 1:
+        _usage(usage_message)
+    command = commands.get(args[0])
+    if not command:
+        _usage(usage_message)
+    command(args[1:])
 
 
 def _format_pull_requests(pull_requests: typing.Sequence[bitbucket.PullRequest]) -> None:
