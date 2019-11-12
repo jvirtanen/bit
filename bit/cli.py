@@ -48,7 +48,7 @@ Usage: bit <command> [<args>]
 
 Available commands:
 
-    pr  List pull requests
+    pr  List Bitbucket pull requests
 \
 '''
 
