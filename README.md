@@ -25,6 +25,16 @@ settings_, _App passwords_ on the website.
 If your repository has multiple remotes pointing to Bitbucket, Bit assumes that
 the primary remote is called either `upstream`, `bitbucket`, or `origin`.
 
+Open the Bitbucket page for the current repository:
+```
+bit browse
+```
+
+Open the Bitbucket page for a specific repository:
+```
+bit browse jvirtanen/bit
+```
+
 List open pull requests:
 ```
 bit pr list

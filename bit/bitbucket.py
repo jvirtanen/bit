@@ -30,7 +30,9 @@ def _parse_pull_request(value: typing.Dict[str, typing.Any]) -> PullRequest:
     return PullRequest(value['id'], value['title'])
 
 
-BASE_URL = 'https://api.bitbucket.org/2.0'
+API_BASE_URL = 'https://api.bitbucket.org/2.0'
+
+WEB_BASE_URL = 'https://bitbucket.org'
 
 
 class Client:
@@ -44,7 +46,7 @@ class Client:
 
     def get_pull_requests(self, repository: str) -> typing.List[PullRequest]:
         query = '?fields=values.id,values.title'
-        url = '{}/repositories/{}/pullrequests{}'.format(BASE_URL, repository, query)
+        url = '{}/repositories/{}/pullrequests{}'.format(API_BASE_URL, repository, query)
         data = http.get_json(url, headers=self._headers)
         return [_parse_pull_request(value) for value in data['values']]
 
@@ -52,6 +54,10 @@ class Client:
 def repository(path: str = None) -> typing.Optional[str]:
     remotes = git.remote(path)
     return _preferred_repository(remotes) or _any_repository(remotes)
+
+
+def repository_url(repository: str) -> str:
+    return '{}/{}'.format(WEB_BASE_URL, repository)
 
 
 PREFERRED_REMOTE_NAMES = ['upstream', 'bitbucket', 'origin']

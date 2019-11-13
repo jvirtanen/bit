@@ -14,13 +14,36 @@
 # limitations under the License.
 #
 
+import getopt
 import sys
 import typing
+import webbrowser
 
 from . import bitbucket
 from . import config
 from . import git
 from . import http
+
+
+BROWSE_USAGE = '''\
+Usage: bit browse [-u|--url] [<user>/<repository>]\
+'''
+
+
+def browse(args: typing.Sequence[str]) -> None:
+    browse = True
+    opts, args = _getopt(args, 'hu', ['help', 'url'], BROWSE_USAGE)
+    for opt, _ in opts:
+        if opt in ['-h', '--help']:
+            _usage(BROWSE_USAGE)
+        elif opt in ['-u', '--url']:
+            browse = False
+    repository = args[0] if args else _repository()
+    repository_url = bitbucket.repository_url(repository)
+    if browse:
+        _browse(repository_url)
+    else:
+        print(repository_url)
 
 
 def pr_list(args: typing.Sequence[str]) -> None:
@@ -48,11 +71,13 @@ Usage: bit <command> [<args>]
 
 Available commands:
 
-    pr  List Bitbucket pull requests
+    browse  Open a Bitbucket page in the default browser
+    pr      List Bitbucket pull requests
 \
 '''
 
 MAIN_COMMANDS = {
+    'browse': browse,
     'pr': pr,
 }
 
@@ -72,6 +97,22 @@ def _run_command(args: typing.Sequence[str],
     if not command:
         _usage(usage_message)
     command(args[1:])
+
+
+def _getopt(args: typing.Sequence[str], shortopts: str, longopts: typing.Sequence[str],
+            usage_message: str) -> typing.Tuple[typing.List[typing.Tuple[str, str]], typing.List[str]]:
+    try:
+        return getopt.getopt(list(args), shortopts, list(longopts))
+    except getopt.GetoptError:
+        _usage(usage_message)
+
+
+def _browse(url: str) -> None:
+    try:
+        if not webbrowser.open(url):
+            print(url)
+    except webbrowser.Error:
+        print(url)
 
 
 def _format_pull_requests(pull_requests: typing.Sequence[bitbucket.PullRequest]) -> None:
